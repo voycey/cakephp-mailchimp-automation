@@ -10,7 +10,7 @@ In order to add a person to an automation queue in Mailchimp there are a few ste
 
 When you create an automation queue in mailchimp (API Triggered) you will see the trigger instructions similar to this:
 
-**API Call to: /automations/5d249e00d6/emails/0bbd53044d/queue**
+**API Call to: /automations/5d249e10d6/emails/0bbd43044d/queue**
 
 This is broken down as:
 
