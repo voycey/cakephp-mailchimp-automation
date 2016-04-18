@@ -21,7 +21,7 @@ As with most API operations this should be used with a deferred execution method
 
 The data sent to this shell needs to be in the format:
 
-```
+```php
 $person = [
   "email_address" => $this->request->data['User']['email'],
   "status" => "subscribed",
@@ -35,7 +35,7 @@ You can pass whatever other merge_fields you want above as well and they will be
 
 ## Using CakeResque (or any other work queue):
 
-```
+```php
 switch (strtolower($this->request->data['User']['lead_source'])) {
   case "certification":
     CakeResque::enqueue("mailchimp", "MailchimpShell", array("automate", "certification", $person), true);
@@ -50,7 +50,7 @@ switch (strtolower($this->request->data['User']['lead_source'])) {
 
 ## Using without a work queue:
 
-```
+```php
 App::uses('MailchimpShell', 'Console/Command');
 $this->Mailchimp = new MailchimpShell();
 $this->Mailchimp->automate("hero-image", $person);
