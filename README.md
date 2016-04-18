@@ -1,5 +1,5 @@
-# cakephp-mailchimp-automation
-A shell to easily add a user to an automation queue using API 3.0 in mailchimp.
+# CakePHP Mailchimp Automation
+A 2.x shell to easily add a user to an automation queue using API 3.0 in mailchimp.
 
 In order to add a person to an automation queue in Mailchimp there are a few steps that need to be followed to get them registered correctly:
 
@@ -17,6 +17,40 @@ This is broken down as:
 API Call to: /automations/**automation_id**/emails/**email_id**/queue
 
 # Usage
-As with most API operations this should be used with a deferred execution method, I use CakeResque as a simple work queue but you can use whatever you want
+As with most API operations this should be used with a deferred execution method, I use CakeResque as a simple work queue but you can use whatever you want:
 
+The data sent to this shell needs to be in the format:
 
+```
+$person = [
+  "email_address" => $this->request->data['User']['email'],
+  "status" => "subscribed",
+  "merge_fields" => [
+    "FNAME" => $this->request->data['User']['first_name'],
+    "LNAME" => $this->request->data['User']['last_name']
+  ]
+];
+```
+You can pass whatever other merge_fields you want above as well and they will be inserted into mailchimp alongside the users record.
+
+## Using CakeResque (or any other work queue):
+
+```
+switch (strtolower($this->request->data['User']['lead_source'])) {
+  case "certification":
+    CakeResque::enqueue("mailchimp", "MailchimpShell", array("automate", "certification", $person), true);
+    break;
+  case "enquiry-form":
+    break; //ignore enquiry form
+  default:
+    CakeResque::enqueue("mailchimp", "MailchimpShell", array("automate", "hero-image", $person), true);
+    break; 
+}
+```
+
+## Using without a work queue:
+
+```
+App::uses('MailchimpShell', 'Console/Command');
+$this->Mailchimp = new MailchimpShell();
+$this->Mailchimp->automate("hero-image", $person);
